@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farmer Mitra 3.0</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f1f7ef;
+color:#183b20;
+}
+
+header{
+background:linear-gradient(135deg,#16803c,#064e2b);
+color:white;
+padding:25px 20px;
+border-radius:0 0 25px 25px;
+}
+
+header h1{margin:0}
+header p{margin:8px 0}
+
+.container{padding:18px}
+
+.search{
+width:100%;
+padding:14px;
+border-radius:12px;
+border:1px solid #ddd;
+font-size:16px;
+margin:10px 0 20px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:14px;
+}
+
+.card{
+background:white;
+padding:20px 10px;
+text-align:center;
+border-radius:18px;
+box-shadow:0 3px 12px #00000010;
+cursor:pointer;
+transition:.2s;
+}
+
+.card:hover{transform:translateY(-3px)}
+.icon{font-size:35px}
+.card h3{font-size:16px}
+
+.section{
+display:none;
+background:white;
+padding:18px;
+margin-top:20px;
+border-radius:18px;
+box-shadow:0 3px 12px #00000010;
+}
+
+.item{
+background:#e9f7ec;
+padding:15px;
+border-radius:12px;
+margin-top:12px;
+}
+
+input,select{
+width:100%;
+padding:13px;
+margin-top:10px;
+border:1px solid #ccc;
+border-radius:10px;
+font-size:16px;
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:10px;
+background:#16803c;
+color:white;
+border:none;
+border-radius:10px;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover{background:#075e32}
+
+.secondary{
+background:#536b58;
+}
+
+footer{
+text-align:center;
+padding:25px;
+color:#57705c;
+}
+
+.small{
+font-size:13px;
+color:#68776b;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🌾 Farmer Mitra</h1>
+<p>Smart Farming | शेतकऱ्यांसाठी डिजिटल मदत</p>
+</header>
+
+<div class="container">
+
+<h2>नमस्कार शेतकरी 👋</h2>
+<p>तुमच्या शेतीसाठी सर्व माहिती एकाच ठिकाणी.</p>
+
+<input class="search" id="searchBox"
+placeholder="🔍 फीचर शोधा..."
+oninput="searchCards()">
+
+<div class="grid" id="mainGrid">
+
+<div class="card" data-key="weather हवामान" onclick="show('weather')">
+<div class="icon">🌦️</div>
+<h3>हवामान</h3>
+</div>
+
+<div class="card" data-key="crop पीक" onclick="show('crop')">
+<div class="icon">🌱</div>
+<h3>पीक माहिती</h3>
+</div>
+
+<div class="card" data-key="fertilizer खत" onclick="show('fertilizer')">
+<div class="icon">🧪</div>
+<h3>खत मार्गदर्शन</h3>
+</div>
+
+<div class="card" data-key="market बाजारभाव" onclick="show('market')">
+<div class="icon">📈</div>
+<h3>बाजारभाव</h3>
+</div>
+
+<div class="card" data-key="disease रोग कीड" onclick="show('disease')">
+<div class="icon">🐛</div>
+<h3>पीक रोग</h3>
+</div>
+
+<div class="card" data-key="scheme योजना" onclick="show('scheme')">
+<div class="icon">🏛️</div>
+<h3>सरकारी योजना</h3>
+</div>
+
+<div class="card" data-key="login account नोंदणी" onclick="show('login')">
+<div class="icon">👤</div>
+<h3>Login / Register</h3>
+</div>
+
+</div>
+
+<!-- WEATHER -->
+
+<div id="weather" class="section">
+<h2>🌦️ Live हवामान</h2>
+
+<input id="city" placeholder="गावाचे नाव">
+
+<button onclick="getWeather()">हवामान शोधा</button>
+
+<div id="weatherResult"></div>
+</div>
+
+<!-- CROPS -->
+
+<div id="crop" class="section">
+<h2>🌱 पीक माहिती</h2>
+
+<select id="cropSelect" onchange="cropInfo()">
+<option value="">पीक निवडा</option>
+<option value="soybean">सोयाबीन</option>
+<option value="cotton">कापूस</option>
+<option value="rice">भात</option>
+<option value="sugarcane">ऊस</option>
+<option value="maize">मका</option>
+<option value="wheat">गहू</option>
+</select>
+
+<div id="cropResult"></div>
+</div>
+
+<!-- FERTILIZER -->
+
+<div id="fertilizer" class="section">
+<h2>🧪 खत मार्गदर्शन</h2>
+
+<select id="fertSelect" onchange="fertInfo()">
+<option value="">पीक निवडा</option>
+<option value="soybean">सोयाबीन</option>
+<option value="cotton">कापूस</option>
+<option value="rice">भात</option>
+<option value="sugarcane">ऊस</option>
+<option value="maize">मका</option>
+<option value="wheat">गहू</option>
+</select>
+
+<div id="fertResult"></div>
+</div>
+
+<!-- MARKET -->
+
+<div id="market" class="section">
+<h2>📈 बाजारभाव</h2>
+
+<p>Live बाजारभाव मिळवण्यासाठी Agmarknet किंवा Data.gov.in API जोडणे आवश्यक आहे.</p>
+
+<div class="item">
+<h3>🫘 सोयाबीन</h3>
+<p>Live डेटा जोडलेला नाही.</p>
+</div>
+
+<div class="item">
+<h3>🌽 मका</h3>
+<p>Live डेटा जोडलेला नाही.</p>
+</div>
+
+<div class="item">
+<h3>🧵 कापूस</h3>
+<p>Live डेटा जोडलेला नाही.</p>
+</div>
+
+<div class="item">
+<h3>🌾 गहू</h3>
+<p>Live डेटा जोडलेला नाही.</p>
+</div>
+
+<button onclick="window.open('https://agmarknet.gov.in/','_blank')">
+Agmarknet बाजारभाव पहा
+</button>
+
+<button class="secondary"
+onclick="window.open('https://data.gov.in/','_blank')">
+Data.gov.in
+</button>
+
+</div>
+
+<!-- DISEASE -->
+
+<div id="disease" class="section">
+<h2>🐛 पीक रोग मार्गदर्शन</h2>
+
+<div class="item">
+<h3>🍂 पानांवर डाग</h3>
+<p>बुरशी किंवा इतर कारणांमुळे डाग येऊ शकतात. रोगाची खात्री करून कृषी तज्ज्ञांचा सल्ला घ्या.</p>
+</div>
+
+<div class="item">
+<h3>🍃 पिवळी पाने</h3>
+<p>पाण्याचा ताण, पोषक तत्वांची कमतरता किंवा रोग यामुळे पिवळेपणा येऊ शकतो.</p>
+</div>
+
+<div class="item">
+<h3>🐛 कीड</h3>
+<p>पिकांचे निरीक्षण करा आणि कीड ओळखून सुरक्षित उपायांचा अवलंब करा.</p>
+</div>
+
+<div class="item">
+<h3>🌱 वाढ कमी</h3>
+<p>माती, पाणी, सूर्यप्रकाश आणि पोषण तपासा.</p>
+</div>
+
+</div>
+
+<!-- SCHEMES -->
+
+<div id="scheme" class="section">
+<h2>🏛️ सरकारी योजना</h2>
+
+<div class="item">
+<h3>PM-KISAN</h3>
+<p>पात्र शेतकरी कुटुंबांसाठी आर्थिक सहाय्य योजना.</p>
+<a href="https://pmkisan.gov.in/" target="_blank">वेबसाइट</a>
+</div>
+
+<div class="item">
+<h3>पीक विमा</h3>
+<p>पिकांच्या नुकसानासाठी विमा संरक्षण योजना.</p>
+<a href="https://pmfby.gov.in/" target="_blank">वेबसाइट</a>
+</div>
+
+<div class="item">
+<h3>महाराष्ट्र कृषी विभाग</h3>
+<p>कृषी विभागाची माहिती व योजना.</p>
+<a href="https://agri.maharashtra.gov.in/" target="_blank">वेबसाइट</a>
+</div>
+
+</div>
+
+<!-- LOGIN UI -->
+
+<div id="login" class="section">
+
+<h2>👤 Login / Register</h2>
+
+<input id="username" placeholder="तुमचे नाव">
+
+<input id="phone" placeholder="मोबाईल नंबर" type="tel"
+maxlength="10">
+
+<button onclick="loginUser()">Login</button>
+
+<div id="loginResult"></div>
+
+<p class="small">
+ही Demo Login सुविधा आहे. यात खरे Account,
+OTP किंवा Server Authentication नाही.
+</p>
+
+</div>
+
+</div>
+
+<footer>
+Farmer Mitra 3.0 🌾
+<br>
+Smart Farming for Farmers
+</footer>
+
+<script>
+
+function show(id){
+
+document.querySelectorAll(".section")
+.forEach(x=>x.style.display="none");
+
+document.getElementById(id).style.display="block";
+
+document.getElementById(id)
+.scrollIntoView({behavior:"smooth"});
+
+}
+
+function searchCards(){
+
+const value=document.getElementById("searchBox")
+.value.toLowerCase();
+
+document.querySelectorAll(".card")
+.forEach(card=>{
+
+card.style.display=
+card.dataset.key.toLowerCase().includes(value)
+?"block":"none";
+
+});
+
+}
+
+// CROP
+
+function cropInfo(){
+
+const c=document.getElementById("cropSelect").value;
+const r=document.getElementById("cropResult");
+
+const data={
+
+soybean:"सोयाबीन: योग्य बियाणे, पाणी व्यवस्थापन, तण नियंत्रण आणि पिकांचे नियमित निरीक्षण महत्त्वाचे आहे.",
+
+cotton:"कापूस: योग्य अंतर, सिंचन, तण नियंत्रण आणि नियमित कीड निरीक्षण करा.",
+
+rice:"भात: योग्य रोपे, पाणी व्यवस्थापन, तण नियंत्रण आणि पोषण यांची काळजी घ्या.",
+
+sugarcane:"ऊस: योग्य लागवड, सिंचन, पोषण व्यवस्थापन आणि तण नियंत्रण महत्त्वाचे आहे.",
+
+maize:"मका: योग्य पेरणी, पोषण, सिंचन आणि तण नियंत्रण यांची काळजी घ्या.",
+
+wheat:"गहू: पेरणीची वेळ, बियाणे, सिंचन आणि पोषण व्यवस्थापन महत्त्वाचे आहे."
+
+};
+
+r.innerHTML=data[c]
+? "<div class='item'><p>"+data[c]+"</p></div>"
+:"";
+
+}
+
+// FERTILIZER
+
+function fertInfo(){
+
+const c=document.getElementById("fertSelect").value;
+const r=document.getElementById("fertResult");
+
+const data={
+
+soybean:"सोयाबीन: माती परीक्षणानुसार नत्र, स्फुरद, पालाश आणि आवश्यक सूक्ष्म अन्नद्रव्यांचे व्यवस्थापन करा.",
+
+cotton:"कापूस: माती परीक्षणानुसार खतांचे नियोजन करा आणि खत देण्याच्या टप्प्यांबाबत स्थानिक कृषी शिफारशी पाळा.",
+
+rice:"भात: जमिनीचा प्रकार आणि रोपांची अवस्था लक्षात घेऊन खत व्यवस्थापन करा.",
+
+sugarcane:"ऊस: माती परीक्षणानुसार खतांचे नियोजन आणि योग्य सिंचन करा.",
+
+maize:"मका: माती परीक्षण आणि स्थानिक शिफारशीनुसार पोषण व्यवस्थापन करा.",
+
+wheat:"गहू: माती परीक्षणानुसार खतांचे नियोजन करा."
+
+};
+
+r.innerHTML=data[c]
+? "<div class='item'><p>"+data[c]+"</p></div>"
+:"";
+
+}
+
+// LOGIN DEMO
+
+function loginUser(){
+
+const name=document.getElementById("username").value.trim();
+const phone=document.getElementById("phone").value.trim();
+const result=document.getElementById("loginResult");
+
+if(!name || !/^[0-9]{10}$/.test(phone)){
+
+result.innerHTML="<div class='item'>कृपया योग्य नाव आणि 10 अंकी मोबाईल नंबर टाका.</div>";
+return;
+
+}
+
+result.innerHTML=
+"<div class='item'>नमस्कार "+name+"! 🌾 Demo Login यशस्वी झाला.</div>";
+
+}
+
+// WEATHER
+
+async function getWeather(){
+
+const city=document.getElementById("city").value.trim();
+const result=document.getElementById("weatherResult");
+
+if(!city){
+result.innerHTML="गावाचे नाव टाका.";
+return;
+}
+
+result.innerHTML="हवामान शोधत आहे...";
+
+try{
+
+const geo=await fetch(
+"https://geocoding-api.open-meteo.com/v1/search?name="+
+encodeURIComponent(city)+"&count=1&language=mr&format=json"
+);
+
+if(!geo.ok)throw new Error();
+
+const gd=await geo.json();
+
+if(!gd.results || !gd.results.length){
+result.innerHTML="गाव सापडले नाही.";
+return;
+}
+
+const p=gd.results[0];
+
+const url=
+"https://api.open-meteo.com/v1/forecast?latitude="+
+p.latitude+"&longitude="+p.longitude+
+"&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&timezone=auto";
+
+const response=await fetch(url);
+
+if(!response.ok)throw new Error();
+
+const d=await response.json();
+const w=d.current;
+
+result.innerHTML=`
+
+<div class="item">
+
+<h2>📍 ${p.name}</h2>
+
+<h1>🌡️ ${w.temperature_2m}°C</h1>
+
+<h3>${weatherDescription(w.weather_code)}</h3>
+
+<p>💧 आर्द्रता: ${w.relative_humidity_2m}%</p>
+
+<p>💨 वाऱ्याचा वेग: ${w.wind_speed_10m} km/h</p>
+
+<p>🕒 ${w.time.replace("T"," ")}</p>
+
+</div>
+
+`;
+
+}catch(e){
+
+result.innerHTML="हवामान मिळवता आले नाही. इंटरनेट तपासा.";
+
+}
+
+}
+
+function weatherDescription(code){
+
+if(code===0)return "स्वच्छ आकाश ☀️";
+if([1,2,3].includes(code))return "ढगाळ ☁️";
+if([45,48].includes(code))return "धुके 🌫️";
+if([51,53,55,56,57].includes(code))return "रिमझिम पाऊस 🌦️";
+if([61,63,65,66,67,80,81,82].includes(code))return "पाऊस 🌧️";
+if([71,73,75,77,85,86].includes(code))return "बर्फ ❄️";
+if([95,96,99].includes(code))return "वादळी हवामान ⛈️";
+
+return "हवामान माहिती उपलब्ध";
+
+}
+
+</script>
+
+</body>
+</html>
